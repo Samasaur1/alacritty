@@ -1396,7 +1396,7 @@ impl Processor {
         //TODO: get the current window, rather than the whichever window this ends up being
         //  perhaps iterate through all windows and check if they are active?
         // let window = self.windows.iter().next().as_ref().unwrap().1;
-        let window = self.windows.iter().find(|(id, context)| context.focused()).unwrap().1;
+        let window = self.windows.iter().find(|(_id, context)| context.focused()).unwrap().1;
         let window_context = window.additional(
             event_loop,
             proxy,
