@@ -98,6 +98,8 @@ pub enum EventType {
     CreateWindow(WindowOptions),
     #[cfg(target_os = "macos")]
     CreateTab(WindowOptions),
+    #[cfg(target_os = "macos")]
+    SelectNextTab,
     #[cfg(unix)]
     IpcConfig(IpcConfig),
     BlinkCursor,
@@ -425,6 +427,11 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
         }
 
         let _ = self.event_proxy.send_event(Event::new(EventType::CreateTab(options), None));
+    }
+
+    #[cfg(target_os = "macos")]
+    fn select_next_tab(&mut self) {
+        let _  = self.event_proxy.send_event(Event::new(EventType::SelectNextTab, None));
     }
 
     fn spawn_daemon<I, S>(&self, program: &str, args: I)
@@ -1184,6 +1191,8 @@ impl input::Processor<EventProxy, ActionContext<'_, Notifier, EventProxy>> {
                 EventType::ConfigReload(_) | EventType::CreateWindow(_) => (),
                 #[cfg(target_os = "macos")]
                 EventType::CreateTab(_) => (),
+                #[cfg(target_os = "macos")]
+                EventType::SelectNextTab => (),
             },
             WinitEvent::RedrawRequested(_) => *self.ctx.dirty = true,
             WinitEvent::WindowEvent { event, .. } => {
@@ -1412,6 +1421,13 @@ impl Processor {
         Ok(())
     }
 
+        #[cfg(target_os = "macos")]
+    pub fn select_next_tab(&mut self) -> Result<(), Box<dyn Error>> {
+        let window = self.windows.iter().find(|(_, context)| context.focused()).unwrap().1;
+        window.display.window.select_next_tab();
+        Ok(())
+    }
+
     /// Run the event loop.
     ///
     /// The result is exit code generate from the loop.
@@ -1575,6 +1591,14 @@ impl Processor {
 
                     if let Err(err) = self.create_tab(event_loop, proxy.clone(), options) {
                         error!("Could not open tab: {:?}", err);
+                    }
+                },
+                #[cfg(target_os = "macos")]
+                WinitEvent::UserEvent(Event {
+                    payload: EventType::SelectNextTab, ..
+                }) => {
+                    if let Err(err) = self.select_next_tab() {
+                        error!("could not select next tab: {:?}", err);
                     }
                 },
                 // Process events affecting all windows.
