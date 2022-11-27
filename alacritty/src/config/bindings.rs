@@ -183,6 +183,9 @@ pub enum Action {
     /// Create a new Alacritty window.
     CreateNewWindow,
 
+    #[cfg(target_os = "macos")]
+    CreateNewTab,
+
     /// Toggle fullscreen.
     ToggleFullscreen,
 
