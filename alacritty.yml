@@ -110,9 +110,9 @@
   #multiplier: 3
 
 # Font configuration
-#font:
+font:
   # Normal (roman) font face
-  #normal:
+  normal:
     # Font family
     #
     # Default:
@@ -120,6 +120,8 @@
     #   - (Linux/BSD) monospace
     #   - (Windows) Consolas
     #family: monospace
+    family: JetBrainsMonoNL Nerd Font Mono
+    style: Regular
 
     # The `style` can be specified to pick a specific face.
     #style: Regular
@@ -131,6 +133,8 @@
     # If the bold family is not specified, it will fall back to the
     # value specified for the normal font.
     #family: monospace
+    # family: JetBrainsMonoNL Nerd Font Mono
+    # style: Bold
 
     # The `style` can be specified to pick a specific face.
     #style: Bold
@@ -142,6 +146,8 @@
     # If the italic family is not specified, it will fall back to the
     # value specified for the normal font.
     #family: monospace
+    # family: JetBrainsMonoNL Nerd Font Mono
+    # style: Italic
 
     # The `style` can be specified to pick a specific face.
     #style: Italic
@@ -153,12 +159,15 @@
     # If the bold italic family is not specified, it will fall back to the
     # value specified for the normal font.
     #family: monospace
+    # family: JetBrainsMonoNL Nerd Font Mono
+    # style: Bold Italic
 
     # The `style` can be specified to pick a specific face.
     #style: Bold Italic
 
   # Point size
   #size: 11.0
+  size: 12.0
 
   # Offset is the extra space around each character. `offset.y` can be thought
   # of as modifying the line spacing, and `offset.x` as modifying the letter
@@ -758,7 +767,7 @@
 #
 # If the same trigger is assigned to multiple actions, all of them are executed
 # in the order they were defined in.
-#key_bindings:
+key_bindings:
   #- { key: Paste,                                       action: Paste          }
   #- { key: Copy,                                        action: Copy           }
   #- { key: L,         mods: Control,                    action: ClearLogNotice }
@@ -869,6 +878,9 @@
   #- { key: F,              mods: Command|Control,            action: ToggleFullscreen      }
   #- { key: F,              mods: Command, mode: ~Search,     action: SearchForward         }
   #- { key: B,              mods: Command, mode: ~Search,     action: SearchBackward        }
+  - { key: N, mods: Command, action: CreateNewWindow }
+  - { key: N, mods: Command|Shift, action: SpawnNewInstance }
+  - { key: T, mods: Command, action: CreateNewTab }
 
 #debug:
   # Display the time it takes to redraw each frame.
