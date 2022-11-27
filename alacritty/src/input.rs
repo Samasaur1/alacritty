@@ -84,6 +84,8 @@ pub trait ActionContext<T: EventListener> {
     fn create_new_window(&mut self) {}
     #[cfg(target_os = "macos")]
     fn create_new_tab(&mut self) {}
+    #[cfg(target_os = "macos")]
+    fn select_next_tab(&mut self) {}
     fn change_font_size(&mut self, _delta: f32) {}
     fn reset_font_size(&mut self) {}
     fn pop_message(&mut self) {}
@@ -348,6 +350,8 @@ impl<T: EventListener> Execute<T> for Action {
             Action::CreateNewWindow => ctx.create_new_window(),
             #[cfg(target_os = "macos")]
             Action::CreateNewTab => ctx.create_new_tab(),
+            #[cfg(target_os = "macos")]
+            Action::SelectNextTab => ctx.select_next_tab(),
             Action::ReceiveChar | Action::None => (),
         }
     }

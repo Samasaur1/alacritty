@@ -208,6 +208,11 @@ impl Window {
         // self.window.add_window_as_tab(tab.window.ns_window());
     }
 
+    #[cfg(target_os = "macos")]
+    pub fn select_next_tab(&self) {
+        self.window.select_next_tab();
+    }
+
     #[inline]
     pub fn raw_window_handle(&self) -> RawWindowHandle {
         self.window.raw_window_handle()
