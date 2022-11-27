@@ -505,6 +505,10 @@ impl WindowContext {
         self.display.window.id()
     }
 
+    pub fn focused(&self) -> bool {
+        self.terminal.lock().is_focused
+    }
+
     /// Write the ref test results to the disk.
     pub fn write_ref_test_results(&self) {
         // Dump grid state.
