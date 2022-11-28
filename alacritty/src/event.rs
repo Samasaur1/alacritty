@@ -100,6 +100,8 @@ pub enum EventType {
     CreateTab(WindowOptions),
     #[cfg(target_os = "macos")]
     SelectNextTab,
+    #[cfg(target_os = "macos")]
+    SelectPreviousTab,
     #[cfg(unix)]
     IpcConfig(IpcConfig),
     BlinkCursor,
@@ -432,6 +434,11 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
     #[cfg(target_os = "macos")]
     fn select_next_tab(&mut self) {
         let _  = self.event_proxy.send_event(Event::new(EventType::SelectNextTab, None));
+    }
+
+    #[cfg(target_os = "macos")]
+    fn select_previous_tab(&mut self) {
+        let _  = self.event_proxy.send_event(Event::new(EventType::SelectPreviousTab, None));
     }
 
     fn spawn_daemon<I, S>(&self, program: &str, args: I)
@@ -1193,6 +1200,8 @@ impl input::Processor<EventProxy, ActionContext<'_, Notifier, EventProxy>> {
                 EventType::CreateTab(_) => (),
                 #[cfg(target_os = "macos")]
                 EventType::SelectNextTab => (),
+                #[cfg(target_os = "macos")]
+                EventType::SelectPreviousTab => (),
             },
             WinitEvent::RedrawRequested(_) => *self.ctx.dirty = true,
             WinitEvent::WindowEvent { event, .. } => {
@@ -1421,10 +1430,17 @@ impl Processor {
         Ok(())
     }
 
-        #[cfg(target_os = "macos")]
+    #[cfg(target_os = "macos")]
     pub fn select_next_tab(&mut self) -> Result<(), Box<dyn Error>> {
         let window = self.windows.iter().find(|(_, context)| context.focused()).unwrap().1;
         window.display.window.select_next_tab();
+        Ok(())
+    }
+
+    #[cfg(target_os = "macos")]
+    pub fn select_previous_tab(&mut self) -> Result<(), Box<dyn Error>> {
+        let window = self.windows.iter().find(|(_, context)| context.focused()).unwrap().1;
+        window.display.window.select_previous_tab();
         Ok(())
     }
 
@@ -1599,6 +1615,14 @@ impl Processor {
                 }) => {
                     if let Err(err) = self.select_next_tab() {
                         error!("could not select next tab: {:?}", err);
+                    }
+                },
+                #[cfg(target_os = "macos")]
+                WinitEvent::UserEvent(Event {
+                    payload: EventType::SelectPreviousTab, ..
+                }) => {
+                    if let Err(err) = self.select_previous_tab() {
+                        error!("could not select previous tab: {:?}", err);
                     }
                 },
                 // Process events affecting all windows.
