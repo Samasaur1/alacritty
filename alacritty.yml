@@ -882,6 +882,7 @@ key_bindings:
   - { key: N, mods: Command|Shift, action: SpawnNewInstance }
   - { key: T, mods: Command, action: CreateNewTab }
   - { key: Tab, mods: Control, action: SelectNextTab }
+  - { key: Tab, mods: Control|Shift, action: SelectPreviousTab }
 
 #debug:
   # Display the time it takes to redraw each frame.
