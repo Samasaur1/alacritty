@@ -88,6 +88,8 @@ pub trait ActionContext<T: EventListener> {
     fn select_next_tab(&mut self) {}
     #[cfg(target_os = "macos")]
     fn select_previous_tab(&mut self) {}
+    #[cfg(target_os = "macos")]
+    fn select_nth_tab(&mut self, _n: usize) {}
     fn change_font_size(&mut self, _delta: f32) {}
     fn reset_font_size(&mut self) {}
     fn pop_message(&mut self) {}
@@ -356,6 +358,16 @@ impl<T: EventListener> Execute<T> for Action {
             Action::SelectNextTab => ctx.select_next_tab(),
             #[cfg(target_os = "macos")]
             Action::SelectPreviousTab => ctx.select_previous_tab(),
+            Action::SelectTab0 => ctx.select_nth_tab(0),
+            Action::SelectTab1 => ctx.select_nth_tab(1),
+            Action::SelectTab2 => ctx.select_nth_tab(2),
+            Action::SelectTab3 => ctx.select_nth_tab(3),
+            Action::SelectTab4 => ctx.select_nth_tab(4),
+            Action::SelectTab5 => ctx.select_nth_tab(5),
+            Action::SelectTab6 => ctx.select_nth_tab(6),
+            Action::SelectTab7 => ctx.select_nth_tab(7),
+            Action::SelectTab8 => ctx.select_nth_tab(8),
+            Action::SelectTab9 => ctx.select_nth_tab(9),
             Action::ReceiveChar | Action::None => (),
         }
     }
