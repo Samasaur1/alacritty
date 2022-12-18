@@ -104,6 +104,8 @@ pub enum EventType {
     SelectPreviousTab,
     #[cfg(target_os = "macos")]
     SelectNthTab(usize),
+    #[cfg(target_os = "macos")]
+    SelectLastTab,
     #[cfg(unix)]
     IpcConfig(IpcConfig),
     BlinkCursor,
@@ -446,6 +448,11 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
     #[cfg(target_os = "macos")]
     fn select_nth_tab(&mut self, n: usize) {
         let _ = self.event_proxy.send_event(Event::new(EventType::SelectNthTab(n), None));
+    }
+
+    #[cfg(target_os = "macos")]
+    fn select_last_tab(&mut self) {
+        let _ = self.event_proxy.send_event(Event::new(EventType::SelectLastTab, None));
     }
 
     fn spawn_daemon<I, S>(&self, program: &str, args: I)
@@ -1211,6 +1218,8 @@ impl input::Processor<EventProxy, ActionContext<'_, Notifier, EventProxy>> {
                 EventType::SelectPreviousTab => (),
                 #[cfg(target_os = "macos")]
                 EventType::SelectNthTab(_) => (),
+                #[cfg(target_os = "macos")]
+                EventType::SelectLastTab => (),
             },
             WinitEvent::RedrawRequested(_) => *self.ctx.dirty = true,
             WinitEvent::WindowEvent { event, .. } => {
@@ -1460,6 +1469,13 @@ impl Processor {
         Ok(())
     }
 
+    #[cfg(target_os = "macos")]
+    pub fn select_last_tab(&mut self) -> Result<(), Box<dyn Error>> {
+        let window = self.windows.iter().find(|(_, context)| context.focused()).unwrap().1;
+        window.display.window.select_last_tab();
+        Ok(())
+    }
+
     /// Run the event loop.
     ///
     /// The result is exit code generate from the loop.
@@ -1647,6 +1663,14 @@ impl Processor {
                                       }) => {
                     if let Err(err) = self.select_nth_tab(n) {
                         error!("Could not select {} tab: {:?}", n, err);
+                    }
+                },
+                #[cfg(target_os = "macos")]
+                WinitEvent::UserEvent(Event {
+                                          payload: EventType::SelectLastTab, ..
+                                      }) => {
+                    if let Err(err) = self.select_last_tab() {
+                        error!("could not select last tab: {:?}", err);
                     }
                 },
                 // Process events affecting all windows.

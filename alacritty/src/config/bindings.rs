@@ -222,6 +222,9 @@ pub enum Action {
     #[cfg(target_os = "macos")]
     SelectTab9,
 
+    #[cfg(target_os = "macos")]
+    SelectLastTab,
+
     /// Toggle fullscreen.
     ToggleFullscreen,
 
