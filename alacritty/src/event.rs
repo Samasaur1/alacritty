@@ -434,6 +434,9 @@ impl<'a, N: Notify + 'a, T: EventListener> input::ActionContext<T> for ActionCon
 
         #[cfg(target_os = "macos")]
         {
+            if tabbing_id.is_none() {
+                options.terminal_options.working_directory = None;
+            }
             options.window_tabbing_id = tabbing_id;
         }
 
